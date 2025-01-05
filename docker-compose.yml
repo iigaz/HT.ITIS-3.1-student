@@ -30,6 +30,7 @@ services:
     depends_on:
       - dotnet_postgres
       - dotnet_mailing
+      - dotnet_rabbitmq
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Default: Host=dotnet_postgres;Username=postgres;Password=postgres;Database=homework
