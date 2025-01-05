@@ -2,9 +2,16 @@ version: '3.8'
 services:
   dotnet_postgres:
     image: postgres:alpine
-    
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: homework
+
   dotnet_rabbitmq:
     image: rabbitmq:3-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: username
+      RABBITMQ_DEFAULT_PASS: incorrect
     
   dotnet_minio:
     image: minio/minio:latest
@@ -16,10 +23,34 @@ services:
     image: jaegertracing/all-in-one:latest
     
   dotnet_main:
-    image: dotnet-web
-    
+    ports:
+      - "5065:80"
+    build:
+      dockerfile: Dotnet.Homeworks.MainProject/Dockerfile
+    depends_on:
+      - dotnet_postgres
+      - dotnet_mailing
+      - dotnet_rabbitmq
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: Host=dotnet_postgres;Username=postgres;Password=postgres;Database=homework
+      RabbitMQ__Hostname: dotnet_rabbitmq
+      RabbitMQ__Username: username
+      RabbitMQ__Password: incorrect
+
   dotnet_mailing:
-    image: dotnet-web
+    build:
+      dockerfile: Dotnet.Homeworks.Mailing.API/Dockerfile
+    environment:
+      EmailConfig__Email: admin@example.com
+      EmailConfig__Port: 443
+      EmailConfig__Host: example.com
+      EmailConfig__Password: adminadmin
+      RabbitMQ__Hostname: dotnet_rabbitmq
+      RabbitMQ__Username: username
+      RabbitMQ__Password: incorrect
+    depends_on:
+      - dotnet_rabbitmq
     
   dotnet_storage:
     image: dotnet-web
