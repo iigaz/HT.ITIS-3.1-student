@@ -1,5 +1,12 @@
-﻿namespace Dotnet.Homeworks.Features.Users.Queries.GetUser;
+﻿using Dotnet.Homeworks.Infrastructure.Cqrs.Queries;
+using Dotnet.Homeworks.Shared.Dto;
 
-public class GetUserQueryHandler //TODO: Inherit certain interface 
+namespace Dotnet.Homeworks.Features.Users.Queries.GetUser;
+
+public class GetUserQueryHandler : IQueryHandler<GetUserQuery, GetUserDto>
 {
+    public async Task<Result<GetUserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 }

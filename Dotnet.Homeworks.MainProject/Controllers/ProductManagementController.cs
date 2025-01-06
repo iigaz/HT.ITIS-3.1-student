@@ -1,7 +1,7 @@
 using Dotnet.Homeworks.Features.Products.Commands.DeleteProduct;
 using Dotnet.Homeworks.Features.Products.Commands.InsertProduct;
 using Dotnet.Homeworks.Features.Products.Commands.UpdateProduct;
-using MediatR;
+using Dotnet.Homeworks.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Dotnet.Homeworks.Features.Products.Queries.GetProducts;
 

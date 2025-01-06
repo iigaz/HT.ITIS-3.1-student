@@ -4,6 +4,7 @@ using Dotnet.Homeworks.Infrastructure.UnitOfWork;
 using Dotnet.Homeworks.MainProject.Configuration;
 using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Masstransit;
+using Dotnet.Homeworks.Mediator.DependencyInjectionExtensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ builder.Services.AddControllers();
 
 builder.Configuration.AddEnvironmentVariables();
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(AssemblyReference.Assembly));
+builder.Services.AddMediator(AssemblyReference.Assembly);
 builder.Services.AddMasstransitRabbitMq(builder.Configuration.GetSection("RabbitMQ").Get<RabbitMqConfig>()!);
 
 builder.Services.AddDbContext<AppDbContext>(options =>

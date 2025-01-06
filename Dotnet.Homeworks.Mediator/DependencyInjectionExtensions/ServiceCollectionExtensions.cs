@@ -5,9 +5,15 @@ namespace Dotnet.Homeworks.Mediator.DependencyInjectionExtensions;
 
 public static class ServiceCollectionExtensions
 {
-    //TODO: Register your custom mediator
     public static IServiceCollection AddMediator(this IServiceCollection services, params Assembly[] handlersAssemblies)
     {
-        throw new NotImplementedException();
+        services.AddSingleton<IMediator, ServiceMediator>();
+        foreach (var assembly in handlersAssemblies)
+        foreach (var type in assembly.GetTypes().Where(t => t.IsClass))
+        foreach (var inf in type.GetInterfaces())
+            if (inf.IsGenericType && (inf.GetGenericTypeDefinition().IsAssignableTo(typeof(IRequestHandler<>)) ||
+                                      inf.GetGenericTypeDefinition().IsAssignableTo(typeof(IRequestHandler<,>))))
+                services.AddScoped(inf, type);
+        return services;
     }
 }

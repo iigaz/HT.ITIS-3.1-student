@@ -1,5 +1,13 @@
-﻿namespace Dotnet.Homeworks.Features.Users.Commands.CreateUser;
+﻿using Dotnet.Homeworks.Infrastructure.Cqrs.Commands;
+using Dotnet.Homeworks.Mediator;
+using Dotnet.Homeworks.Shared.Dto;
 
-public class CreateUserCommandHandler //TODO: Inherit certain interface 
+namespace Dotnet.Homeworks.Features.Users.Commands.CreateUser;
+
+public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, CreateUserDto>
 {
+    public async Task<Result<CreateUserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 }
