@@ -1,4 +1,5 @@
-﻿using Dotnet.Homeworks.MainProject.Dto;
+﻿using Dotnet.Homeworks.Features.Dto;
+using Dotnet.Homeworks.Features.Services;
 using Dotnet.Homeworks.Shared.MessagingContracts.Email;
 
 namespace Dotnet.Homeworks.MainProject.Services;
