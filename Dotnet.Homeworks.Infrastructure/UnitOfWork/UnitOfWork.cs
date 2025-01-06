@@ -10,11 +10,13 @@ public class UnitOfWork : IUnitOfWork
     {
         AppDbContext = appDbContext;
         ProductRepository = new ProductRepository(appDbContext);
+        UserRepository = new UserRepository(appDbContext);
     }
 
     private AppDbContext AppDbContext { get; }
 
     public IProductRepository ProductRepository { get; }
+    public IUserRepository UserRepository { get; }
 
     public async Task SaveChangesAsync(CancellationToken token)
     {

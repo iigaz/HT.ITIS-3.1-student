@@ -21,12 +21,14 @@ public class ProductRepository : IProductRepository
 
     public Task DeleteProductByGuidAsync(Guid id, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         DbContext.Products.Remove(new Product { Id = id });
         return Task.CompletedTask;
     }
 
     public Task UpdateProductAsync(Product product, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         DbContext.Products.Update(product);
         return Task.CompletedTask;
     }
