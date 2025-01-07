@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Concurrent;
+using System.Security.Claims;
 using Dotnet.Homeworks.Infrastructure.Utils;
 using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker.Enums;
 using Dotnet.Homeworks.Infrastructure.Validation.RequestTypes;
@@ -7,27 +8,30 @@ namespace Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker;
 
 public class PermissionCheck : IPermissionCheck
 {
-    public PermissionCheck(IHttpContextAccessor httpContextAccessor)
+    private ConcurrentBag<Type> RegisteredRequestTypes { get; } = new ConcurrentBag<Type>();
+
+    public PermissionCheck(IServiceProvider serviceProvider)
     {
-        HttpContextAccessor = httpContextAccessor;
+        ServiceProvider = serviceProvider;
     }
 
-    private IHttpContextAccessor HttpContextAccessor { get; }
-
-    public Task<IEnumerable<PermissionResult>> CheckPermissionAsync<TRequest>(TRequest request)
+    internal void AddRequestType(Type requestTypeType)
     {
-        var parsed = Enum.TryParse<Roles>(HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Role),
-                         out var role) &
-                     Guid.TryParse(HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier),
-                         out var id);
-        if (!parsed)
-            return Task.FromResult<IEnumerable<PermissionResult>>(new[]
-                { new PermissionResult(false, "Could not parse claims.") });
+        RegisteredRequestTypes.Add(requestTypeType);
+    }
+
+    private IServiceProvider ServiceProvider { get; }
+
+    public async Task<IEnumerable<PermissionResult>> CheckPermissionAsync<TRequest>(TRequest request)
+    {
         var ans = new List<PermissionResult>();
-        if (request is IAdminRequest adminRequest)
-            ans.Add(adminRequest.CheckPermission(role));
-        if (request is IClientRequest clientRequest)
-            ans.Add(clientRequest.CheckPermission(id));
-        return Task.FromResult<IEnumerable<PermissionResult>>(ans);
+        await using (var scope = ServiceProvider.CreateAsyncScope())
+        foreach (var type in RegisteredRequestTypes)
+            if (typeof(TRequest).IsAssignableTo(type))
+                foreach (var checker in scope.ServiceProvider.GetServices(typeof(IPermissionChecker<>).MakeGenericType(type)))
+                    if (checker is IPermissionChecker<TRequest> permissionChecker)
+                        ans.Add(await permissionChecker.CheckPermissionAsync(request));
+
+        return ans.Where(result => result.IsFailure);
     }
 }

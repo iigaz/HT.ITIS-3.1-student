@@ -1,10 +1,13 @@
 using Dotnet.Homeworks.Data.DatabaseContext;
 using Dotnet.Homeworks.Features.Helpers;
 using Dotnet.Homeworks.Features.ServiceExtensions;
+using Dotnet.Homeworks.Features.Services;
 using Dotnet.Homeworks.Infrastructure.UnitOfWork;
 using Dotnet.Homeworks.MainProject.Configuration;
+using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Masstransit;
 using Dotnet.Homeworks.Mediator.DependencyInjectionExtensions;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 

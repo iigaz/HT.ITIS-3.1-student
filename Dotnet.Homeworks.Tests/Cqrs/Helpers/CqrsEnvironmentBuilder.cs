@@ -2,6 +2,7 @@
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Features.Products.Commands.InsertProduct;
 using Dotnet.Homeworks.Features.Products.Queries.GetProducts;
+using Dotnet.Homeworks.Features.Services;
 using Dotnet.Homeworks.Infrastructure.Cqrs.Commands;
 using Dotnet.Homeworks.Infrastructure.Cqrs.Queries;
 using Dotnet.Homeworks.Infrastructure.UnitOfWork;
@@ -29,6 +30,8 @@ internal class CqrsEnvironmentBuilder : TestEnvironmentBuilder<CqrsEnvironment>
     private Mediator.IMediator CustomMediator { get; set; } = Substitute.For<Mediator.IMediator>();
     private ProductManagementController? ProductManagementController { get; set; }
 
+    private IRegistrationService RegistrationService { get; set; } = Substitute.For<IRegistrationService>();
+
     private bool _withMockedMediator;
     private bool _withPipelineBehaviors;
 
@@ -53,7 +56,8 @@ internal class CqrsEnvironmentBuilder : TestEnvironmentBuilder<CqrsEnvironment>
             .AddSingleton<IProductRepository>(ProductRepositoryMock)
             .AddSingleton<IUserRepository>(UserRepositoryMock)
             .AddSingleton(HttpContextAccessorMock)
-            .AddSingleton(UnitOfWork);
+            .AddSingleton(UnitOfWork)
+            .AddSingleton(RegistrationService);
         if (IsCqrsComplete()) configureServices += s => s
             .AddValidatorsFromAssembly(Features.Helpers.AssemblyReference.Assembly)
             .AddPermissionChecks(Features.Helpers.AssemblyReference.Assembly);
@@ -72,7 +76,7 @@ internal class CqrsEnvironmentBuilder : TestEnvironmentBuilder<CqrsEnvironment>
         GetMockedMediatorFromServiceProvider();
 
         return new CqrsEnvironment(ProductManagementController,
-            UnitOfWork, MediatR, CustomMediator, UserRepositoryMock);
+            UnitOfWork, MediatR, CustomMediator, UserRepositoryMock, RegistrationService);
     }
 
     public void SetupHttpContextClaims(List<Claim> claims)

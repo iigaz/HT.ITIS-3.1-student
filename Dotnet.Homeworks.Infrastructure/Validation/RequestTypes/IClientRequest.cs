@@ -1,10 +1,6 @@
-﻿using Dotnet.Homeworks.Infrastructure.Utils;
+﻿namespace Dotnet.Homeworks.Infrastructure.Validation.RequestTypes;
 
-namespace Dotnet.Homeworks.Infrastructure.Validation.RequestTypes;
-
-public interface IClientRequest 
+public interface IClientRequest
 {
     public Guid Guid { get; }
-
-    public PermissionResult CheckPermission(Guid clientId);
 }

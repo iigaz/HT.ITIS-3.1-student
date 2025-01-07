@@ -9,11 +9,7 @@ public static class ServiceCollectionExtensions
         Assembly assembly
     )
     {
-        // ВОТ НЕ МОГЛИ СРАЗУ СКАЗАТЬ, ЧТО НУЖНО НОВЫЕ ИНТЕРФЕЙСЫ ДЛЯ PERMISSIONCHECK СОЗДАВАТЬ
-        // ЗАДАНИЕ ТО ВЫПОЛНЯЕТСЯ БЕЗ НОВЫХ ИНТЕРФЕЙСОВ
-        // И МНЕ ВОТ ТЕПЕРЬ СПУСТЯ НЕСКОЛЬКО ЧАСОВ ОБДУМЫВАНИЯ ЧТО ОТ МЕНЯ ХОТЯТ ПЕРЕПИСЫВАТЬ ЛОГИКУ PERMISSIONCHECK,
-        // КОГДА ОНА БЫЛА ПОЛНОСТЬЮ РЕАЛИЗОВАНА.
-        throw new NotImplementedException();
+        serviceCollection.AddPermissionChecks(new []{ assembly });
     }
     
     public static void AddPermissionChecks(
@@ -21,6 +17,19 @@ public static class ServiceCollectionExtensions
         Assembly[] assemblies
     )
     {
-        throw new NotImplementedException();
+        serviceCollection.AddSingleton<IPermissionCheck, PermissionCheck>(provider =>
+        {
+            var check = new PermissionCheck(provider);
+            foreach (var assembly in assemblies)
+            foreach (var type in assembly.GetTypes().Where(t => t.IsClass))
+            foreach (var inf in type.GetInterfaces())
+                if (inf.IsGenericType && inf.GetGenericTypeDefinition().IsAssignableTo(typeof(IPermissionChecker<>)))
+                {
+                    serviceCollection.AddScoped(inf, type);
+                    check.AddRequestType(inf.GenericTypeArguments[0]);
+                }
+
+            return check;
+        });
     }
 }

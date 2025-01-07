@@ -13,11 +13,4 @@ public class DeleteUserByAdminCommand : IAdminRequest, ICommand
     {
         Guid = guid;
     }
-
-    public PermissionResult CheckPermission(Roles role)
-    {
-        return role == Roles.Admin
-            ? new PermissionResult(true)
-            : new PermissionResult(false, "Only admins can delete users.");
-    }
 }

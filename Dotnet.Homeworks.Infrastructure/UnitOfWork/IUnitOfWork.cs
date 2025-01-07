@@ -6,4 +6,5 @@ public interface IUnitOfWork
 {
     Task SaveChangesAsync(CancellationToken token);
     IProductRepository ProductRepository { get; }
+    IUserRepository UserRepository { get; }
 }

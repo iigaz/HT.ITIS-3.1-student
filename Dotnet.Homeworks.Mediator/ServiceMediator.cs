@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Dotnet.Homeworks.Mediator;
 
 public class ServiceMediator : IMediator
@@ -9,31 +11,34 @@ public class ServiceMediator : IMediator
 
     private IServiceProvider ServiceProvider { get; }
     
-    public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
+    public async Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
+        await using var scope = ServiceProvider.CreateAsyncScope();
         var handler =
-            ServiceProvider.GetService(typeof(IRequestHandler<IRequest<TResponse>, TResponse>)) as
+            scope.ServiceProvider.GetService(typeof(IRequestHandler<IRequest<TResponse>, TResponse>)) as
                 IRequestHandler<IRequest<TResponse>, TResponse>;
         if (handler == null)
             throw new NotSupportedException(
-                $"Request handler for type {typeof(IRequest<TResponse>)} was not registered.");
-        return handler.Handle(request, cancellationToken);
+                $"Request handler for type {typeof(IRequestHandler<IRequest<TResponse>, TResponse>)} was not registered.");
+        return await handler.Handle(request, cancellationToken);
     }
 
-    public Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
+    public async Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
     {
+        await using var scope = ServiceProvider.CreateAsyncScope();
         var handler =
-            ServiceProvider.GetService(typeof(IRequestHandler<TRequest>)) as
+            scope.ServiceProvider.GetService(typeof(IRequestHandler<TRequest>)) as
                 IRequestHandler<TRequest>;
         if (handler == null)
             throw new NotSupportedException(
-                $"Request handler for type {typeof(TRequest)} was not registered.");
-        return handler.Handle(request, cancellationToken);
+                $"Request handler for type {typeof(IRequestHandler<TRequest>)} was not registered.");
+        await handler.Handle(request, cancellationToken);
     }
 
-    public Task<dynamic?> Send(dynamic request, CancellationToken cancellationToken = default)
+    public async Task<dynamic?> Send(dynamic request, CancellationToken cancellationToken = default)
     {
-        var handler = ServiceProvider.GetService(request.GetType());
-        return handler == null ? Task.FromResult<object?>(null) : (Task<dynamic?>)handler.Handle(request, cancellationToken);
+        await using var scope = ServiceProvider.CreateAsyncScope();
+        var handler = scope.ServiceProvider.GetService(request.GetType());
+        return handler == null ? null : await handler.Handle(request, cancellationToken);
     }
 }

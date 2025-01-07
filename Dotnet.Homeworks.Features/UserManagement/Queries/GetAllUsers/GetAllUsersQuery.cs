@@ -7,10 +7,4 @@ namespace Dotnet.Homeworks.Features.UserManagement.Queries.GetAllUsers;
 
 public class GetAllUsersQuery : IAdminRequest, IQuery<GetAllUsersDto>
 {
-    public PermissionResult CheckPermission(Roles role)
-    {
-        return role == Roles.Admin
-            ? new PermissionResult(true)
-            : new PermissionResult(false, "Only admins can get all users.");
-    }
 }

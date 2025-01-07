@@ -12,13 +12,13 @@ namespace Dotnet.Homeworks.Features.Users.Commands.CreateUser;
 
 public class CreateUserCommandHandler : CqrsDecorator<CreateUserCommand, CreateUserDto>, ICommandHandler<CreateUserCommand, CreateUserDto>
 {
-    public CreateUserCommandHandler(UnitOfWork unitOfWork, IRegistrationService registrationService, IPermissionCheck permissionCheck, IValidator<CreateUserCommand>? validator):base(permissionCheck, validator)
+    public CreateUserCommandHandler(IUnitOfWork unitOfWork, IRegistrationService registrationService, IPermissionCheck permissionCheck, IValidator<CreateUserCommand>? validator):base(permissionCheck, validator)
     {
         UnitOfWork = unitOfWork;
         RegistrationService = registrationService;
     }
 
-    private UnitOfWork UnitOfWork { get; }
+    private IUnitOfWork UnitOfWork { get; }
     private IRegistrationService RegistrationService { get; }
     
     public new async Task<Result<CreateUserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
