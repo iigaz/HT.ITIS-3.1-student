@@ -14,15 +14,18 @@ public class ClientPermissionChecker : IPermissionChecker<IClientRequest>
     }
 
     private IHttpContextAccessor HttpContextAccessor { get; }
+
     public Task<PermissionResult> CheckPermissionAsync(IClientRequest request)
     {
-        
-        var parsed = Guid.TryParse(HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier),
-        out var id);
-        if (!parsed)
-            return Task.FromResult(new PermissionResult(false, "Could not parse claims."));
-        return Task.FromResult(id == request.Guid
-            ? new PermissionResult(true)
-            : new PermissionResult(false, "You cannot do that."));
+        var parsed = Guid.TryParse(
+            HttpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value,
+            out var id);
+        if (parsed)
+            return Task.FromResult(id == request.Guid
+                ? new PermissionResult(true)
+                : new PermissionResult(false, "You cannot do that."));
+
+        return Task.FromResult(new PermissionResult(false, "Could not parse claims."));
     }
 }
