@@ -17,6 +17,11 @@ public static class ServiceCollectionExtensions
         Assembly[] assemblies
     )
     {
+        foreach (var assembly in assemblies)
+        foreach (var type in assembly.GetTypes().Where(t => t.IsClass))
+        foreach (var inf in type.GetInterfaces())
+            if (inf.IsGenericType && inf.GetGenericTypeDefinition().IsAssignableTo(typeof(IPermissionChecker<>)))
+                    serviceCollection.AddScoped(inf, type);
         serviceCollection.AddSingleton<IPermissionCheck, PermissionCheck>(provider =>
         {
             var check = new PermissionCheck(provider);
@@ -24,10 +29,7 @@ public static class ServiceCollectionExtensions
             foreach (var type in assembly.GetTypes().Where(t => t.IsClass))
             foreach (var inf in type.GetInterfaces())
                 if (inf.IsGenericType && inf.GetGenericTypeDefinition().IsAssignableTo(typeof(IPermissionChecker<>)))
-                {
-                    serviceCollection.AddScoped(inf, type);
                     check.AddRequestType(inf.GenericTypeArguments[0]);
-                }
 
             return check;
         });
