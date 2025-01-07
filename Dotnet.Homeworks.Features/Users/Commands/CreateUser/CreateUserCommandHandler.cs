@@ -3,13 +3,16 @@ using Dotnet.Homeworks.Features.Dto;
 using Dotnet.Homeworks.Features.Services;
 using Dotnet.Homeworks.Infrastructure.Cqrs.Commands;
 using Dotnet.Homeworks.Infrastructure.UnitOfWork;
+using Dotnet.Homeworks.Infrastructure.Validation.Decorators;
+using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker;
 using Dotnet.Homeworks.Shared.Dto;
+using FluentValidation;
 
 namespace Dotnet.Homeworks.Features.Users.Commands.CreateUser;
 
-public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, CreateUserDto>
+public class CreateUserCommandHandler : CqrsDecorator<CreateUserCommand, CreateUserDto>, ICommandHandler<CreateUserCommand, CreateUserDto>
 {
-    public CreateUserCommandHandler(UnitOfWork unitOfWork, IRegistrationService registrationService)
+    public CreateUserCommandHandler(UnitOfWork unitOfWork, IRegistrationService registrationService, IPermissionCheck permissionCheck, IValidator<CreateUserCommand>? validator):base(permissionCheck, validator)
     {
         UnitOfWork = unitOfWork;
         RegistrationService = registrationService;
@@ -18,8 +21,11 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Creat
     private UnitOfWork UnitOfWork { get; }
     private IRegistrationService RegistrationService { get; }
     
-    public async Task<Result<CreateUserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public new async Task<Result<CreateUserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
+        var decResult = await base.Handle(request, cancellationToken);
+        if (decResult.IsFailure)
+            return decResult;
         await RegistrationService.RegisterAsync(new RegisterUserDto(request.Name, request.Email));
         var result = await UnitOfWork.UserRepository.InsertUserAsync(
             new User() { Email = request.Email, Id = Guid.NewGuid(), Name = request.Name }, cancellationToken);

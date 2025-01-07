@@ -1,19 +1,25 @@
 ﻿using Dotnet.Homeworks.Infrastructure.Cqrs.Queries;
 using Dotnet.Homeworks.Infrastructure.UnitOfWork;
+using Dotnet.Homeworks.Infrastructure.Validation.Decorators;
+using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker;
 using Dotnet.Homeworks.Shared.Dto;
+using FluentValidation;
 
 namespace Dotnet.Homeworks.Features.Users.Queries.GetUser;
 
-public class GetUserQueryHandler : IQueryHandler<GetUserQuery, GetUserDto>
+public class GetUserQueryHandler : CqrsDecorator<GetUserQuery, GetUserDto>, IQueryHandler<GetUserQuery, GetUserDto>
 {
-    public GetUserQueryHandler(UnitOfWork unitOfWork)
+    public GetUserQueryHandler(UnitOfWork unitOfWork, IPermissionCheck permissionCheck, IValidator<GetUserQuery>? validator) : base(permissionCheck, validator)
     {
         UnitOfWork = unitOfWork;
     }
 
     private UnitOfWork UnitOfWork { get; }
-    public async Task<Result<GetUserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
+    public new async Task<Result<GetUserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
+        var decResult = await base.Handle(request, cancellationToken);
+        if (decResult.IsFailure)
+            return decResult;
         var result = await UnitOfWork.UserRepository.GetUserByGuidAsync(request.Guid, cancellationToken);
         return result == null
             ? new Result<GetUserDto>(null, false, "User not found.")
