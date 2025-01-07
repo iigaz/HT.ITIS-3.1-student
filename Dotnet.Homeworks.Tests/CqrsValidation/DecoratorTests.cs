@@ -124,6 +124,7 @@ public class DecoratorTests
         var result = await TestUser.GetUserAsync(guid, env.CustomMediator);
 
         // Assert
+        Console.WriteLine(result);
         Assert.True(result.IsSuccess);
     }
 

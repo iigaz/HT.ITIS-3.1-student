@@ -9,12 +9,12 @@ namespace Dotnet.Homeworks.Features.Users.Commands.UpdateUser;
 
 public class UpdateUserCommandHandler : CqrsDecorator<UpdateUserCommand, object>, ICommandHandler<UpdateUserCommand>
 {
-    public UpdateUserCommandHandler(UnitOfWork unitOfWork, IPermissionCheck permissionCheck, IValidator<UpdateUserCommand>? validator) : base(permissionCheck, validator)
+    public UpdateUserCommandHandler(IUnitOfWork unitOfWork, IPermissionCheck permissionCheck, IValidator<UpdateUserCommand>? validator) : base(permissionCheck, validator)
     {
         UnitOfWork = unitOfWork;
     }
 
-    private UnitOfWork UnitOfWork { get; }
+    private IUnitOfWork UnitOfWork { get; }
     public new async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var decResult = await base.Handle(request, cancellationToken);

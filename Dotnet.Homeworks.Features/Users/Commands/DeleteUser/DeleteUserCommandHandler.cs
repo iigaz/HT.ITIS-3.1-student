@@ -10,12 +10,12 @@ namespace Dotnet.Homeworks.Features.Users.Commands.DeleteUser;
 
 public class DeleteUserCommandHandler: CqrsDecorator<DeleteUserCommand, object>, ICommandHandler<DeleteUserCommand>
 {
-    public DeleteUserCommandHandler(UnitOfWork unitOfWork, IPermissionCheck permissionCheck, IValidator<DeleteUserCommand>? validator): base(permissionCheck, validator)
+    public DeleteUserCommandHandler(IUnitOfWork unitOfWork, IPermissionCheck permissionCheck): base(permissionCheck, null)
     {
         UnitOfWork = unitOfWork;
     }
 
-    private UnitOfWork UnitOfWork { get; }
+    private IUnitOfWork UnitOfWork { get; }
     public new async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         var decResult = await base.Handle(request, cancellationToken);

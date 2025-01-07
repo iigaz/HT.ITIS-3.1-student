@@ -9,12 +9,12 @@ namespace Dotnet.Homeworks.Features.Users.Queries.GetUser;
 
 public class GetUserQueryHandler : CqrsDecorator<GetUserQuery, GetUserDto>, IQueryHandler<GetUserQuery, GetUserDto>
 {
-    public GetUserQueryHandler(UnitOfWork unitOfWork, IPermissionCheck permissionCheck, IValidator<GetUserQuery>? validator) : base(permissionCheck, validator)
+    public GetUserQueryHandler(IUnitOfWork unitOfWork, IPermissionCheck permissionCheck) : base(permissionCheck, null)
     {
         UnitOfWork = unitOfWork;
     }
 
-    private UnitOfWork UnitOfWork { get; }
+    private IUnitOfWork UnitOfWork { get; }
     public new async Task<Result<GetUserDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
         var decResult = await base.Handle(request, cancellationToken);
