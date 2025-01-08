@@ -1,6 +1,6 @@
-﻿using Dotnet.Homeworks.MainProject.Dto;
+﻿using Dotnet.Homeworks.Features.Dto;
 
-namespace Dotnet.Homeworks.MainProject.Services;
+namespace Dotnet.Homeworks.Features.Services;
 
 public interface IRegistrationService
 {
