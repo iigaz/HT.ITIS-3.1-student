@@ -1,14 +1,11 @@
 ﻿using System.Collections.Concurrent;
-using System.Security.Claims;
 using Dotnet.Homeworks.Infrastructure.Utils;
-using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker.Enums;
-using Dotnet.Homeworks.Infrastructure.Validation.RequestTypes;
 
 namespace Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker;
 
 public class PermissionCheck : IPermissionCheck
 {
-    private ConcurrentBag<Type> RegisteredRequestTypes { get; } = new ConcurrentBag<Type>();
+    private ConcurrentBag<Type> RegisteredRequestTypes { get; } = new();
 
     public PermissionCheck(IServiceProvider serviceProvider)
     {
@@ -26,11 +23,14 @@ public class PermissionCheck : IPermissionCheck
     {
         var ans = new List<PermissionResult>();
         await using (var scope = ServiceProvider.CreateAsyncScope())
-        foreach (var type in RegisteredRequestTypes)
-            if (typeof(TRequest).IsAssignableTo(type))
-                foreach (var checker in scope.ServiceProvider.GetServices(typeof(IPermissionChecker<>).MakeGenericType(type)))
-                    if (checker is IPermissionChecker<TRequest> permissionChecker)
-                        ans.Add(await permissionChecker.CheckPermissionAsync(request));
+        {
+            foreach (var type in RegisteredRequestTypes)
+                if (typeof(TRequest).IsAssignableTo(type))
+                    foreach (var checker in scope.ServiceProvider.GetServices(
+                                 typeof(IPermissionChecker<>).MakeGenericType(type)))
+                        if (checker is IPermissionChecker<TRequest> permissionChecker)
+                            ans.Add(await permissionChecker.CheckPermissionAsync(request));
+        }
 
         return ans.Where(result => result.IsFailure);
     }

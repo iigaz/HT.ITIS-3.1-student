@@ -3,6 +3,7 @@ using Dotnet.Homeworks.Features.Helpers;
 using Dotnet.Homeworks.Features.ServiceExtensions;
 using Dotnet.Homeworks.Features.Services;
 using Dotnet.Homeworks.Infrastructure.UnitOfWork;
+using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker.DependencyInjectionExtensions;
 using Dotnet.Homeworks.MainProject.Configuration;
 using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Masstransit;
@@ -22,9 +23,8 @@ builder.Services.AddMasstransitRabbitMq(builder.Configuration.GetSection("Rabbit
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 builder.Services.AddFeatures();
+builder.Services.AddPermissionChecks(AssemblyReference.Assembly);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();

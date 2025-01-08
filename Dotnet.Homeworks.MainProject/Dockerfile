@@ -10,6 +10,10 @@ COPY ["Dotnet.Homeworks.MainProject/Dotnet.Homeworks.MainProject.csproj", "Dotne
 COPY ["Dotnet.Homeworks.Data/Dotnet.Homeworks.Data.csproj", "Dotnet.Homeworks.Data/"]
 COPY ["Dotnet.Homeworks.Domain/Dotnet.Homeworks.Domain.csproj", "Dotnet.Homeworks.Domain/"]
 COPY ["Dotnet.Homeworks.Shared/Dotnet.Homeworks.Shared.csproj", "Dotnet.Homeworks.Shared/"]
+COPY ["Dotnet.Homeworks.DataAccess/Dotnet.Homeworks.DataAccess.csproj", "Dotnet.Homeworks.DataAccess/"]
+COPY ["Dotnet.Homeworks.Infrastructure/Dotnet.Homeworks.Infrastructure.csproj", "Dotnet.Homeworks.Infrastructure/"]
+COPY ["Dotnet.Homeworks.Mediator/Dotnet.Homeworks.Mediator.csproj", "Dotnet.Homeworks.Mediator/"]
+COPY ["Dotnet.Homeworks.Features/Dotnet.Homeworks.Features.csproj", "Dotnet.Homeworks.Features/"]
 RUN dotnet restore "Dotnet.Homeworks.MainProject/Dotnet.Homeworks.MainProject.csproj"
 COPY . .
 WORKDIR "/src/Dotnet.Homeworks.MainProject"
