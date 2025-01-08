@@ -18,8 +18,8 @@ public class AdminPermissionChecker : IPermissionChecker<IAdminRequest>
 
     public Task<PermissionResult> CheckPermissionAsync(IAdminRequest request)
     {
-
-        var parsed = Enum.TryParse<Roles>(HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Role),
+        var parsed = Enum.TryParse<Roles>(HttpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(claim => claim.Type == ClaimTypes.Role)?.Value,
             out var role);
         if (!parsed)
             return Task.FromResult(new PermissionResult(false, "Could not parse claims."));

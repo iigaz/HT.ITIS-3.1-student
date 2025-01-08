@@ -17,7 +17,7 @@ public class UserRepository : IUserRepository
     public Task<IQueryable<User>> GetUsersAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return Task.FromResult(DbContext.Users.AsQueryable());
+        return Task.FromResult<IQueryable<User>>(DbContext.Users);
     }
 
     public async Task<User?> GetUserByGuidAsync(Guid guid, CancellationToken cancellationToken)

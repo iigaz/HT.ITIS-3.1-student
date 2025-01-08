@@ -6,6 +6,7 @@ using Dotnet.Homeworks.Features.Users.Commands.DeleteUser;
 using Dotnet.Homeworks.Features.Users.Commands.UpdateUser;
 using Dotnet.Homeworks.Features.Users.Queries.GetUser;
 using Dotnet.Homeworks.Infrastructure.Cqrs.Commands;
+using Dotnet.Homeworks.Infrastructure.Validation.Behaviors;
 using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.Mediator;
 using Dotnet.Homeworks.Shared.Dto;
@@ -25,6 +26,11 @@ public static class FeaturesExtensions
         // Services
         services.AddSingleton<IRegistrationService, RegistrationService>();
         services.AddSingleton<ICommunicationService, CommunicationService>();
+        
+        // Pipelines
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(PermissionCheckBehaviour<,>));
+        
         return services;
     }
 }
