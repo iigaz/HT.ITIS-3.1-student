@@ -36,7 +36,7 @@ public class PendingObjectsProcessor : BackgroundService
                 .WithBucket(Constants.Buckets.Pending)
                 .WithObject(item);
             var statObject = await MinioClient.StatObjectAsync(objectStatArgs, cancellationToken);
-            if (!statObject.MetaData.ContainsKey(Constants.MetadataKeys.Destination)) continue;
+            if (!statObject.MetaData.ContainsKey(Constants.MetadataKeys.Destination) || statObject.MetaData[Constants.MetadataKeys.Destination] == Constants.Buckets.Pending) continue;
             var copySourceObjectArgs = new CopySourceObjectArgs()
                 .WithBucket(Constants.Buckets.Pending)
                 .WithObject(item);
@@ -46,9 +46,12 @@ public class PendingObjectsProcessor : BackgroundService
                 .WithCopyObjectSource(copySourceObjectArgs);
             await MinioClient.CopyObjectAsync(copyObjectArgs, cancellationToken);
         }
-        var removeArgs = new RemoveObjectsArgs()
-            .WithBucket(Constants.Buckets.Pending)
-            .WithObjects(items);
-        await MinioClient.RemoveObjectsAsync(removeArgs, cancellationToken);
+        if (items.Count > 0 )
+        {
+            var removeArgs = new RemoveObjectsArgs()
+                .WithBucket(Constants.Buckets.Pending)
+                .WithObjects(items);
+            await MinioClient.RemoveObjectsAsync(removeArgs, cancellationToken);
+        }
     }
 }
