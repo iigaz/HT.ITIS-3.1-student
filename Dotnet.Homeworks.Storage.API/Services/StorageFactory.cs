@@ -1,13 +1,18 @@
 ﻿using Dotnet.Homeworks.Storage.API.Dto.Internal;
+using Minio;
 
 namespace Dotnet.Homeworks.Storage.API.Services;
 
 public class StorageFactory : IStorageFactory
 {
+    public StorageFactory(IMinioClient minioClient)
+    {
+        MinioClient = minioClient;
+    }
+
+    private IMinioClient MinioClient { get; }
     public Task<IStorage<Image>> CreateImageStorageWithinBucketAsync(string bucketName)
     {
-        // TODO: implement creation of IImageStorage with the given bucketName
-        // e.g. each storage should work only within its bucket (but still may copy items to another bucket)
-        throw new NotImplementedException();
+        return Task.FromResult<IStorage<Image>>(new ImageStorage(MinioClient, bucketName));
     }
 }
