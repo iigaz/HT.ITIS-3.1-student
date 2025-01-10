@@ -16,7 +16,12 @@ public class ProductRepository : IProductRepository
 
     public async Task<IEnumerable<Product>> GetAllProductsAsync(CancellationToken cancellationToken)
     {
-        return await DbContext.Products.ToArrayAsync(cancellationToken: cancellationToken);
+        return await DbContext.Products.ToArrayAsync(cancellationToken);
+    }
+
+    public async Task<Product?> GetProductByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await DbContext.Products.FirstOrDefaultAsync(product => product.Id == id, cancellationToken);
     }
 
     public Task DeleteProductByGuidAsync(Guid id, CancellationToken cancellationToken)

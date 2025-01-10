@@ -12,7 +12,7 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: username
       RABBITMQ_DEFAULT_PASS: incorrect
-    
+
   dotnet_minio:
     image: minio/minio:latest
     networks:
@@ -29,13 +29,15 @@ services:
       MINIO_ROOT_PASSWORD: Tr0ub4dor&3
     command: server --console-address ":9001" /data
 
-    
   dotnet_mongodb:
     image: mongo:latest
-    
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: Randall
+      MONGO_INITDB_ROOT_PASSWORD: Tr0ub4dor&3
+
   dotnet_jaeger:
     image: jaegertracing/all-in-one:latest
-    
+
   dotnet_main:
     ports:
       - "5065:80"
@@ -45,12 +47,14 @@ services:
       - dotnet_postgres
       - dotnet_mailing
       - dotnet_rabbitmq
+      - dotnet_mongodb
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Default: Host=dotnet_postgres;Username=postgres;Password=postgres;Database=homework
       RabbitMQ__Hostname: dotnet_rabbitmq
       RabbitMQ__Username: username
       RabbitMQ__Password: incorrect
+      MongoDb__ConnectionString: "mongodb://Randall:Tr0ub4dor&3@dotnet_mongo:27017/"
 
   dotnet_mailing:
     build:
@@ -65,7 +69,7 @@ services:
       RabbitMQ__Password: incorrect
     depends_on:
       - dotnet_rabbitmq
-    
+
   dotnet_storage:
     build:
       dockerfile: Dotnet.Homeworks.Storage.API/Dockerfile
@@ -83,7 +87,7 @@ services:
       - dotnet_minio
 
 volumes:
-  minio_storage: {}
+  minio_storage: { }
 
 networks:
   dotnet_minio_network:

@@ -1,5 +1,6 @@
 using Dotnet.Homeworks.DataAccess.Repositories;
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
+using Dotnet.Homeworks.Domain.Entities;
 using Dotnet.Homeworks.Features.Services;
 using Dotnet.Homeworks.Features.UserManagement.Commands.DeleteUserByAdmin;
 using Dotnet.Homeworks.Features.UserManagement.Queries.GetAllUsers;
@@ -15,6 +16,7 @@ using Dotnet.Homeworks.Mediator;
 using Dotnet.Homeworks.Shared.Dto;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 
 namespace Dotnet.Homeworks.Features.ServiceExtensions;
 
@@ -34,6 +36,7 @@ public static class FeaturesExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddSingleton<IOrderRepository, OrderRepository>();
 
         // Pipelines
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

@@ -33,29 +33,30 @@ public class ServiceMediator : IMediator
                         typeof(IRequestHandler<,>).MakeGenericType(requestImpl, typeof(TResponse)));
                 if (handler == null)
                     continue;
-                var func = Expression.Lambda<RequestHandlerDelegate<TResponse>>(Expression.Call(Expression.Constant(handler),
+                var func = Expression.Lambda<RequestHandlerDelegate<TResponse>>(Expression.Call(
+                    Expression.Constant(handler),
                     handler.GetType().GetMethod("Handle", new[] { requestImpl, typeof(CancellationToken) })!,
                     Expression.Constant(request), Expression.Constant(cancellationToken))).Compile();
 
                 var pipeline = func;
                 var pipelines = scope.ServiceProvider.GetServices(
-                    typeof(IPipelineBehavior<,>).MakeGenericType(requestImpl, typeof(TResponse)))
+                        typeof(IPipelineBehavior<,>).MakeGenericType(requestImpl, typeof(TResponse)))
                     .ToArray();
                 if (pipelines.Length > 0)
-                {
                     foreach (var pipe in pipelines.Reverse())
                     {
                         if (pipe == null)
                             continue;
-                        pipeline = Expression.Lambda<RequestHandlerDelegate<TResponse>>(Expression.Call(Expression.Constant(pipe),
+                        pipeline = Expression.Lambda<RequestHandlerDelegate<TResponse>>(Expression.Call(
+                            Expression.Constant(pipe),
                             pipe.GetType().GetMethod("Handle",
                                 new[]
                                 {
                                     requestImpl, typeof(RequestHandlerDelegate<TResponse>), typeof(CancellationToken)
-                                })!, Expression.Constant(request), Expression.Constant(func),
+                                })!, Expression.Constant(request), Expression.Constant(pipeline),
                             Expression.Constant(cancellationToken))).Compile();
                     }
-                }
+
                 return await pipeline();
             }
 

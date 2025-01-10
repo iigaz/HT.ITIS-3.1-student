@@ -5,10 +5,12 @@ namespace Dotnet.Homeworks.Domain.Abstractions.Repositories;
 public interface IProductRepository
 {
     Task<IEnumerable<Product>> GetAllProductsAsync(CancellationToken cancellationToken);
-    
+
+    Task<Product?> GetProductByIdAsync(Guid id, CancellationToken cancellationToken);
+
     Task DeleteProductByGuidAsync(Guid guid, CancellationToken cancellationToken);
-    
+
     Task UpdateProductAsync(Product product, CancellationToken cancellationToken);
-    
+
     Task<Guid> InsertProductAsync(Product product, CancellationToken cancellationToken);
 }

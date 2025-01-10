@@ -7,6 +7,7 @@ using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker.DependencyInj
 using Dotnet.Homeworks.MainProject.Configuration;
 using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Masstransit;
+using Dotnet.Homeworks.MainProject.ServicesExtensions.MongoDb;
 using Dotnet.Homeworks.Mediator.DependencyInjectionExtensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,6 +20,7 @@ builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddMediator(AssemblyReference.Assembly);
 builder.Services.AddMasstransitRabbitMq(builder.Configuration.GetSection("RabbitMQ").Get<RabbitMqConfig>()!);
+builder.Services.AddMongoClient(builder.Configuration.GetSection("MongoDb").Get<MongoDbConfig>()!);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));

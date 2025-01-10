@@ -10,9 +10,11 @@ using FluentValidation;
 
 namespace Dotnet.Homeworks.Features.Users.Commands.CreateUser;
 
-public class CreateUserCommandHandler : CqrsDecorator<CreateUserCommand, CreateUserDto>, ICommandHandler<CreateUserCommand, CreateUserDto>
+public class CreateUserCommandHandler : CqrsDecorator<CreateUserCommand, CreateUserDto>,
+    ICommandHandler<CreateUserCommand, CreateUserDto>
 {
-    public CreateUserCommandHandler(IUnitOfWork unitOfWork, IRegistrationService registrationService, IPermissionCheck permissionCheck, IValidator<CreateUserCommand>? validator):base(permissionCheck, validator)
+    public CreateUserCommandHandler(IUnitOfWork unitOfWork, IRegistrationService registrationService,
+        IPermissionCheck permissionCheck, IValidator<CreateUserCommand>? validator) : base(permissionCheck, validator)
     {
         UnitOfWork = unitOfWork;
         RegistrationService = registrationService;
@@ -20,16 +22,17 @@ public class CreateUserCommandHandler : CqrsDecorator<CreateUserCommand, CreateU
 
     private IUnitOfWork UnitOfWork { get; }
     private IRegistrationService RegistrationService { get; }
-    
+
     public new async Task<Result<CreateUserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var decResult = await base.Handle(request, cancellationToken);
         if (decResult.IsFailure)
             return decResult;
         await RegistrationService.RegisterAsync(new RegisterUserDto(request.Name, request.Email));
-        var result = await UnitOfWork.UserRepository.InsertUserAsync(
-            new User() { Email = request.Email, Id = Guid.NewGuid(), Name = request.Name }, cancellationToken);
+        var userId = Guid.NewGuid();
+        await UnitOfWork.UserRepository.InsertUserAsync(
+            new User() { Email = request.Email, Id = userId, Name = request.Name }, cancellationToken);
         await UnitOfWork.SaveChangesAsync(cancellationToken);
-        return new Result<CreateUserDto>(new CreateUserDto(result), true);
+        return new Result<CreateUserDto>(new CreateUserDto(userId), true);
     }
 }

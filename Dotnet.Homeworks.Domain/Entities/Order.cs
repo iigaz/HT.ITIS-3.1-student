@@ -6,7 +6,7 @@ public class Order : BaseEntity
     /// Id пользователя, сделавшего заказ
     /// </summary>
     public Guid OrdererId { get; init; }
-    
+
     /// <summary>
     /// Список Id продуктов, входящих в заказ
     /// </summary>
