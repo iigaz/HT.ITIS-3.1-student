@@ -1,32 +1,45 @@
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Domain.Entities;
+using MongoDB.Driver;
 
 namespace Dotnet.Homeworks.DataAccess.Repositories;
 
 public class OrderRepository : IOrderRepository
 {
-    public Task<IEnumerable<Order>> GetAllOrdersFromUserAsync(Guid userId, CancellationToken cancellationToken)
+    private const string DatabaseName = "OrderDatabase";
+    private const string CollectionName = "OrderCollection";
+
+    public OrderRepository(MongoClient mongoClient)
     {
-        throw new NotImplementedException();
+        var db = mongoClient.GetDatabase(DatabaseName)!;
+        OrdersCollection = db.GetCollection<Order>(CollectionName);
     }
 
-    public Task<Order?> GetOrderByGuidAsync(Guid orderId, CancellationToken cancellationToken)
+    private IMongoCollection<Order> OrdersCollection { get; }
+
+    public async Task<IEnumerable<Order>> GetAllOrdersFromUserAsync(Guid userId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await OrdersCollection.Find(order => order.OrdererId == userId).ToListAsync(cancellationToken);
     }
 
-    public Task DeleteOrderByGuidAsync(Guid orderId, CancellationToken cancellationToken)
+    public async Task<Order?> GetOrderByGuidAsync(Guid orderId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await OrdersCollection.Find(order => order.Id == orderId).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public Task UpdateOrderAsync(Order order, CancellationToken cancellationToken)
+    public async Task DeleteOrderByGuidAsync(Guid orderId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        await OrdersCollection.DeleteOneAsync(order => order.Id == orderId, cancellationToken);
     }
 
-    public Task<Guid> InsertOrderAsync(Order order, CancellationToken cancellationToken)
+    public async Task UpdateOrderAsync(Order order, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        await OrdersCollection.ReplaceOneAsync(ord => ord.Id == order.Id, order, cancellationToken: cancellationToken);
+    }
+
+    public async Task<Guid> InsertOrderAsync(Order order, CancellationToken cancellationToken)
+    {
+        await OrdersCollection.InsertOneAsync(order, cancellationToken: cancellationToken);
+        return order.Id;
     }
 }

@@ -1,27 +1,46 @@
+using Dotnet.Homeworks.Data.DatabaseContext;
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dotnet.Homeworks.DataAccess.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    public Task<IEnumerable<Product>> GetAllProductsAsync(CancellationToken cancellationToken)
+    public ProductRepository(AppDbContext dbContext)
     {
-        throw new NotImplementedException();
+        DbContext = dbContext;
+    }
+
+    private AppDbContext DbContext { get; }
+
+    public async Task<IEnumerable<Product>> GetAllProductsAsync(CancellationToken cancellationToken)
+    {
+        return await DbContext.Products.ToArrayAsync(cancellationToken);
+    }
+
+    public async Task<Product?> GetProductByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await DbContext.Products.FirstOrDefaultAsync(product => product.Id == id, cancellationToken);
     }
 
     public Task DeleteProductByGuidAsync(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+        DbContext.Products.Remove(new Product { Id = id });
+        return Task.CompletedTask;
     }
 
     public Task UpdateProductAsync(Product product, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+        DbContext.Products.Update(product);
+        return Task.CompletedTask;
     }
 
-    public Task<Guid> InsertProductAsync(Product product, CancellationToken cancellationToken)
+    public async Task<Guid> InsertProductAsync(Product product, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var prod = await DbContext.Products.AddAsync(product, cancellationToken);
+        return prod.Entity.Id;
     }
 }
