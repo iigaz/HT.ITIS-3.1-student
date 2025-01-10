@@ -54,7 +54,7 @@ services:
       RabbitMQ__Hostname: dotnet_rabbitmq
       RabbitMQ__Username: username
       RabbitMQ__Password: incorrect
-      MongoDb__ConnectionString: "mongodb://Randall:Tr0ub4dor&3@dotnet_mongo:27017/"
+      MongoDb__ConnectionString: "mongodb://Randall:Tr0ub4dor&3@dotnet_mongodb:27017/"
 
   dotnet_mailing:
     build:
