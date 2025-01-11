@@ -10,15 +10,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
-        <PackageReference Include="Mapster" Version="7.4.0-pre06" />
-        <PackageReference Include="MassTransit.TestFramework" Version="8.0.16" />
-        <PackageReference Include="MediatR" Version="12.1.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.8" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-        <PackageReference Include="Minio" Version="5.0.0" />
-        <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
-        <PackageReference Include="NSubstitute" Version="5.0.0" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1"/>
+        <PackageReference Include="Mapster" Version="7.4.0"/>
+        <PackageReference Include="MassTransit.TestFramework" Version="8.0.16"/>
+        <PackageReference Include="MediatR" Version="12.1.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.8"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0"/>
+        <PackageReference Include="Minio" Version="5.0.0"/>
+        <PackageReference Include="NetArchTest.Rules" Version="1.3.2"/>
+        <PackageReference Include="NSubstitute" Version="5.0.0"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -27,15 +27,15 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="YamlDotNet" Version="13.1.1" />
+        <PackageReference Include="YamlDotNet" Version="13.1.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Dotnet.Homeworks.Features\Dotnet.Homeworks.Features.csproj" />
-        <ProjectReference Include="..\Dotnet.Homeworks.Infrastructure\Dotnet.Homeworks.Infrastructure.csproj" />
-        <ProjectReference Include="..\Dotnet.Homeworks.Mailing.API\Dotnet.Homeworks.Mailing.API.csproj" />
-        <ProjectReference Include="..\Dotnet.Homeworks.MainProject\Dotnet.Homeworks.MainProject.csproj" />
-        <ProjectReference Include="..\Dotnet.Homeworks.Tests.RunLogic\Dotnet.Homeworks.Tests.RunLogic.csproj" />
+        <ProjectReference Include="..\Dotnet.Homeworks.Features\Dotnet.Homeworks.Features.csproj"/>
+        <ProjectReference Include="..\Dotnet.Homeworks.Infrastructure\Dotnet.Homeworks.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Dotnet.Homeworks.Mailing.API\Dotnet.Homeworks.Mailing.API.csproj"/>
+        <ProjectReference Include="..\Dotnet.Homeworks.MainProject\Dotnet.Homeworks.MainProject.csproj"/>
+        <ProjectReference Include="..\Dotnet.Homeworks.Tests.RunLogic\Dotnet.Homeworks.Tests.RunLogic.csproj"/>
     </ItemGroup>
 
 </Project>

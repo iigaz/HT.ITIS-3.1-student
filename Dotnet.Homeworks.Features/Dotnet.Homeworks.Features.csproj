@@ -7,20 +7,35 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-          <_Parameter1>Dotnet.Homeworks.Tests</_Parameter1>
-      </AssemblyAttribute>
+        <Generated Include="**\*.g.cs"/>
+    </ItemGroup>
+    <Target Name="CleanGenerated" BeforeTargets="build">
+        <Delete Files="@(Generated)"/>
+    </Target>
+
+    <Target Name="Mapster" AfterTargets="build">
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore"/>
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a &quot;$(TargetDir)$(ProjectName).dll&quot;"/>
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster extension -a &quot;$(TargetDir)$(ProjectName).dll&quot;"/>
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster mapper -a &quot;$(TargetDir)$(ProjectName).dll&quot;"/>
+    </Target>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Dotnet.Homeworks.Tests</_Parameter1>
+        </AssemblyAttribute>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Dotnet.Homeworks.Domain\Dotnet.Homeworks.Domain.csproj" />
-      <ProjectReference Include="..\Dotnet.Homeworks.Infrastructure\Dotnet.Homeworks.Infrastructure.csproj" />
+        <ProjectReference Include="..\Dotnet.Homeworks.Domain\Dotnet.Homeworks.Domain.csproj"/>
+        <ProjectReference Include="..\Dotnet.Homeworks.Infrastructure\Dotnet.Homeworks.Infrastructure.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
-      <PackageReference Include="MassTransit" Version="8.0.16" />
-      <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.16" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1"/>
+        <PackageReference Include="Mapster" Version="7.4.0"/>
+        <PackageReference Include="MassTransit" Version="8.0.16"/>
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.16"/>
     </ItemGroup>
 
 </Project>
