@@ -1,4 +1,5 @@
-﻿using Dotnet.Homeworks.Mailing.API.Services;
+﻿using Dotnet.Homeworks.Features.Services;
+using Dotnet.Homeworks.Mailing.API.Services;
 using Dotnet.Homeworks.MainProject.Services;
 using MassTransit.Testing;
 

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 using Dotnet.Homeworks.Features.Helpers;
 using Dotnet.Homeworks.Features.Orders.Mapping;
 using Dotnet.Homeworks.Features.Products.Mapping;
@@ -63,14 +64,12 @@ public partial class MapsterTests
 
         foreach (var mapperInterface in mappers)
         {
-            var foundIQueryable = mapperInterface.GetMethods()
-                .Any(m => m.GetParameters()
-                    .Any(p => p.ParameterType.IsGenericType &&
-                              p.ParameterType.GetGenericTypeDefinition() == typeof(IQueryable<>)));
-            if (foundIQueryable) return; // test is passed
+            var foundExpression = mapperInterface.GetProperties()
+                .Any(prop => prop.PropertyType.GetGenericTypeDefinition() == typeof(Expression<>));
+            if (foundExpression) return; // test is passed
         }
 
-        Assert.Fail("No mapper has a method with IQueryable as one of the parameters types");
+        Assert.Fail("No mapper has a property with Expression<> as its return type");
     }
 
     [HomeworkTheory(RunLogic.Homeworks.AutoMapper)]

@@ -58,7 +58,7 @@ public class DecoratorTests
     public async Task CreateUserOperation_Must_ReturnFailedResult_WhenEmailIsNotUnique()
     {
         // Arrange
-        string email = "copy@email.ru";
+        var email = "copy@email.ru";
         await using var testEnvBuilder = new CqrsEnvironmentBuilder();
 
         var env = testEnvBuilder.Build();
@@ -95,10 +95,11 @@ public class DecoratorTests
         await using var testEnvBuilder = new CqrsEnvironmentBuilder();
 
         testEnvBuilder.SetupHttpContextClaims(new List<Claim>()
-            { new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()) });
+            { new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()) });
 
         var env = testEnvBuilder.Build();
-        var guid = await env.UserRepository.InsertUserAsync(new User() { Name = Name, Email = Email }, CancellationToken.None);
+        var guid = await env.UserRepository.InsertUserAsync(new User() { Name = Name, Email = Email },
+            CancellationToken.None);
 
         // Act
         var result = await TestUser.GetUserAsync(guid, env.CustomMediator);
@@ -115,10 +116,11 @@ public class DecoratorTests
         await using var testEnvBuilder = new CqrsEnvironmentBuilder();
         var guid = Guid.NewGuid();
         testEnvBuilder.SetupHttpContextClaims(new List<Claim>()
-            { new Claim(ClaimTypes.NameIdentifier, guid.ToString()) });
+            { new(ClaimTypes.NameIdentifier, guid.ToString()) });
 
         var env = testEnvBuilder.Build();
-        await env.UserRepository.InsertUserAsync(new User() { Id = guid, Name = name, Email = email }, CancellationToken.None);
+        await env.UserRepository.InsertUserAsync(new User() { Id = guid, Name = name, Email = email },
+            CancellationToken.None);
 
         // Act
         var result = await TestUser.GetUserAsync(guid, env.CustomMediator);
@@ -136,10 +138,11 @@ public class DecoratorTests
         var guid = Guid.NewGuid();
 
         testEnvBuilder.SetupHttpContextClaims(new List<Claim>()
-            { new Claim(ClaimTypes.NameIdentifier, guid.ToString()) });
+            { new(ClaimTypes.NameIdentifier, guid.ToString()) });
 
         var env = testEnvBuilder.Build();
-        await env.UserRepository.InsertUserAsync(new User() { Id = guid, Name = name, Email = email }, CancellationToken.None);
+        await env.UserRepository.InsertUserAsync(new User() { Id = guid, Name = name, Email = email },
+            CancellationToken.None);
 
         // Act
         var result = await TestUser.DeleteUserAsync(guid, env.CustomMediator);
@@ -157,10 +160,11 @@ public class DecoratorTests
         var guid = Guid.NewGuid();
 
         testEnvBuilder.SetupHttpContextClaims(new List<Claim>()
-            { new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()) });
+            { new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()) });
 
         var env = testEnvBuilder.Build();
-        await env.UserRepository.InsertUserAsync(new User() { Id = guid, Name = Name, Email = Email }, CancellationToken.None);
+        await env.UserRepository.InsertUserAsync(new User() { Id = guid, Name = Name, Email = Email },
+            CancellationToken.None);
 
         // Act
         var result = await TestUser.DeleteUserAsync(guid, env.CustomMediator);
@@ -179,10 +183,11 @@ public class DecoratorTests
         var guid = Guid.NewGuid();
 
         testEnvBuilder.SetupHttpContextClaims(new List<Claim>()
-            { new Claim(ClaimTypes.NameIdentifier, guid.ToString()) });
+            { new(ClaimTypes.NameIdentifier, guid.ToString()) });
 
         var env = testEnvBuilder.Build();
-        await env.UserRepository.InsertUserAsync(new User() { Id = guid, Name = name, Email = email }, CancellationToken.None);
+        await env.UserRepository.InsertUserAsync(new User() { Id = guid, Name = name, Email = email },
+            CancellationToken.None);
         var user = new User() { Email = Email, Id = guid, Name = Name };
 
         // Act
@@ -201,10 +206,11 @@ public class DecoratorTests
         var guid = Guid.NewGuid();
 
         testEnvBuilder.SetupHttpContextClaims(new List<Claim>()
-            { new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()) });
+            { new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()) });
 
         var env = testEnvBuilder.Build();
-        await env.UserRepository.InsertUserAsync(new User() { Id = guid, Name = Name, Email = Email }, CancellationToken.None);
+        await env.UserRepository.InsertUserAsync(new User() { Id = guid, Name = Name, Email = Email },
+            CancellationToken.None);
         var user = new User() { Email = Email, Id = guid, Name = Name };
 
         // Act
@@ -222,7 +228,7 @@ public class DecoratorTests
         await using var testEnvBuilder = new CqrsEnvironmentBuilder();
 
         testEnvBuilder.SetupHttpContextClaims(new List<Claim>()
-            { new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()) });
+            { new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()) });
 
         var env = testEnvBuilder.Build();
 
@@ -241,7 +247,7 @@ public class DecoratorTests
         await using var testEnvBuilder = new CqrsEnvironmentBuilder();
 
         testEnvBuilder.SetupHttpContextClaims(new List<Claim>()
-            { new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()) });
+            { new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()) });
 
         var env = testEnvBuilder.Build();
         var user = new User() { Email = Email, Id = Guid.NewGuid(), Name = Name };

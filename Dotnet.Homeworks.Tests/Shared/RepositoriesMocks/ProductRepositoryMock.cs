@@ -14,6 +14,12 @@ public class ProductRepositoryMock : IProductRepository
         return Task.FromResult<IEnumerable<Product>>(products);
     }
 
+    public Task<Product?> GetProductByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var exists = _products.TryGetValue(id, out var product);
+        return Task.FromResult(exists ? product : null);
+    }
+
     public Task DeleteProductByGuidAsync(Guid id, CancellationToken cancellationToken)
     {
         _products.Remove(id, out var product);
