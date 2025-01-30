@@ -1,15 +1,22 @@
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using Dotnet.Homeworks.Features.Products.Commands.DeleteProduct;
 using Dotnet.Homeworks.Features.Products.Commands.InsertProduct;
 using Dotnet.Homeworks.Features.Products.Commands.UpdateProduct;
+using Dotnet.Homeworks.Features.Products.Queries.GetProducts;
 using Dotnet.Homeworks.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Dotnet.Homeworks.Features.Products.Queries.GetProducts;
 
 namespace Dotnet.Homeworks.MainProject.Controllers;
 
 [ApiController]
 public class ProductManagementController : ControllerBase
 {
+    private static readonly Counter<int> GetProductsHitCounter =
+        new Meter("Dotnet.Homeworks.Meter").CreateCounter<int>("GetProductsHitCounter");
+
+    private static readonly ActivitySource ActivitySource = new("Dotnet.Homeworks.Source");
+
     public ProductManagementController(IMediator mediator)
     {
         Mediator = mediator;
@@ -20,6 +27,8 @@ public class ProductManagementController : ControllerBase
     [HttpGet("products")]
     public async Task<IActionResult> GetProducts(CancellationToken cancellationToken)
     {
+        using var activity = ActivitySource.StartActivity();
+        GetProductsHitCounter.Add(1);
         var result = await Mediator.Send(new GetProductsQuery(), cancellationToken);
         if (result.IsSuccess)
             return Ok(result.Value);
