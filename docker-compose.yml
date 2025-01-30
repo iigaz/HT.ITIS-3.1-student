@@ -37,6 +37,10 @@ services:
 
   dotnet_jaeger:
     image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
 
   dotnet_main:
     ports:
@@ -48,6 +52,7 @@ services:
       - dotnet_mailing
       - dotnet_rabbitmq
       - dotnet_mongodb
+      - dotnet_jaeger
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Default: Host=dotnet_postgres;Username=postgres;Password=postgres;Database=homework
