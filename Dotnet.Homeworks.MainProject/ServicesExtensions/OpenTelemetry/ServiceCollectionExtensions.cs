@@ -19,9 +19,12 @@ public static class ServiceCollectionExtensions
                 .AddHttpClientInstrumentation()
                 .AddRuntimeInstrumentation()
                 .AddMeter("Dotnet.Homeworks.Meter")
+                .AddMeter("Microsoft.AspNetCore.Hosting")
+                .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
                 .AddConsoleExporter())
             .WithTracing(tracing => tracing
                 .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
                 .AddSource("Dotnet.Homeworks.Source")
                 .AddOtlpExporter(options => options.Endpoint = new Uri(openTelemetryConfiguration.OtlpExporterEndpoint))
                 .AddConsoleExporter());

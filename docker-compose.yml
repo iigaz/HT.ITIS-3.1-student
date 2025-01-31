@@ -51,12 +51,6 @@ services:
       - "5065:80"
     build:
       dockerfile: Dotnet.Homeworks.MainProject/Dockerfile
-    depends_on:
-      - dotnet_postgres
-      - dotnet_mailing
-      - dotnet_rabbitmq
-      - dotnet_mongodb
-      - dotnet_jaeger
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Default: Host=dotnet_postgres;Username=postgres;Password=postgres;Database=homework
@@ -64,7 +58,13 @@ services:
       RabbitMQ__Username: username
       RabbitMQ__Password: incorrect
       MongoDb__ConnectionString: "mongodb://Randall:Tr0ub4dor&3@dotnet_mongodb:27017/"
-      OpenTelemetry__OtlpExporterEndpoint: "http://localhost:4317/"
+      OpenTelemetry__OtlpExporterEndpoint: "http://dotnet_jaeger:4317/"
+    depends_on:
+      - dotnet_postgres
+      - dotnet_mailing
+      - dotnet_rabbitmq
+      - dotnet_mongodb
+      - dotnet_jaeger
 
   dotnet_mailing:
     build:
