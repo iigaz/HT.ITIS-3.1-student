@@ -1,32 +1,46 @@
-﻿using Dotnet.Homeworks.Domain.Abstractions.Repositories;
+﻿using Dotnet.Homeworks.Data.DatabaseContext;
+using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dotnet.Homeworks.DataAccess.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    public Task<IQueryable<User>> GetUsersAsync(CancellationToken cancellationToken)
+    public UserRepository(AppDbContext dbContext)
     {
-        throw new NotImplementedException();
+        DbContext = dbContext;
     }
 
-    public Task<User?> GetUserByGuidAsync(Guid guid, CancellationToken cancellationToken)
+    private AppDbContext DbContext { get; }
+    
+    public Task<IQueryable<User>> GetUsersAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult<IQueryable<User>>(DbContext.Users);
+    }
+
+    public async Task<User?> GetUserByGuidAsync(Guid guid, CancellationToken cancellationToken)
+    {
+        return await DbContext.Users.FirstOrDefaultAsync(user => user.Id == guid, cancellationToken);
     }
 
     public Task DeleteUserByGuidAsync(Guid guid, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+        DbContext.Users.Remove(new User() { Id = guid });
+        return Task.CompletedTask;
     }
 
     public Task UpdateUserAsync(User user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+        DbContext.Users.Update(user);
+        return Task.CompletedTask;
     }
 
-    public Task<Guid> InsertUserAsync(User user, CancellationToken cancellationToken)
+    public async Task<Guid> InsertUserAsync(User user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return (await DbContext.Users.AddAsync(user, cancellationToken)).Entity.Id;
     }
 }

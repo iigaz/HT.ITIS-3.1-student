@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using System.Security.Claims;
+using Dotnet.Homeworks.Data.DatabaseContext;
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
+using Dotnet.Homeworks.Features.Services;
 using Dotnet.Homeworks.Infrastructure.UnitOfWork;
 using Dotnet.Homeworks.Infrastructure.Validation.PermissionChecker.DependencyInjectionExtensions;
 using Dotnet.Homeworks.Mediator;
@@ -9,6 +11,7 @@ using Dotnet.Homeworks.Tests.Shared.RepositoriesMocks;
 using Dotnet.Homeworks.Tests.Shared.TestEnvironmentBuilder;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 
@@ -17,7 +20,7 @@ namespace Dotnet.Homeworks.Tests.MongoDb.Helpers;
 public class MongoEnvironmentBuilder : TestEnvironmentBuilder<MongoEnvironment>
 {
     private static readonly Assembly FeaturesAssembly = Features.Helpers.AssemblyReference.Assembly;
-    
+
     private IMediator? _mediator;
     private IHttpContextAccessor? _contextAccessor;
 
@@ -33,13 +36,22 @@ public class MongoEnvironmentBuilder : TestEnvironmentBuilder<MongoEnvironment>
         ConfigureContextUser();
         return this;
     }
-    
+
     public override void SetupServices(Action<IServiceCollection>? configureServices = default)
     {
         configureServices += s => s
             .AddSingleton<IOrderRepository, OrderRepositoryMock>()
             .AddSingleton<IProductRepository, ProductRepositoryMock>()
-            .AddSingleton(Substitute.For<IUnitOfWork>())
+            .AddSingleton(provider =>
+            {
+                var unitOfWork = Substitute.For<IUnitOfWork>();
+                var productRepository = provider.GetService<IProductRepository>();
+                var userRepository = provider.GetService<IUserRepository>();
+                unitOfWork.ProductRepository.Returns(productRepository);
+                unitOfWork.UserRepository.Returns(userRepository);
+                return unitOfWork;
+            })
+            .AddSingleton(Substitute.For<IRegistrationService>())
             .AddSingleton<IUserRepository, UserRepositoryMock>()
             .AddMediator(FeaturesAssembly)
             .AddSingleton(_contextAccessor ?? InitializeContextAccessor());
